@@ -1,0 +1,49 @@
+name: 'pip-audit SARIF converter'
+description: 'Convert pip-audit JSON output into SARIF 2.1.0 for GitHub code scanning'
+author: 'Courtney Bodily'
+branding:
+  color: 'purple'
+  icon: 'shield'
+
+inputs:
+  input-file:
+    description: 'Path to pip-audit JSON output file'
+    required: true
+  output-file:
+    description: 'Path where the SARIF file should be written'
+    required: true
+  artifact-path:
+    description: 'Repo-relative path to the dependency file (e.g., vulnerable-app/requirements.txt)'
+    required: false
+    default: 'requirements.txt'
+  tool-version:
+    description: 'pip-audit version to record in SARIF metadata'
+    required: false
+    default: ''
+
+outputs:
+  sarif-file:
+    description: 'Path to the generated SARIF file'
+    value: ${{ steps.convert.outputs.sarif-file }}
+  finding-count:
+    description: 'Number of findings in the SARIF run'
+    value: ${{ steps.convert.outputs.finding-count }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Run converter
+      id: convert
+      shell: bash
+      run: |
+        python "${{ github.action_path }}/converter.py" \
+          --input "${{ inputs.input-file }}" \
+          --output "${{ inputs.output-file }}" \
+          --artifact-path "${{ inputs.artifact-path }}" \
+          --tool-version "${{ inputs.tool-version }}"
+
