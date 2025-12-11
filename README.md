@@ -77,3 +77,23 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results.sarif
+
+Severity Mapping & Tool Limitations
+
+The pip-audit tool does not provide severity levels (High/Medium/Low) or CVSS scores in its JSON output. This is because the data sources used by pip-audit (PyPI Advisory Database and OSV) do not consistently include severity metadata. As a result, pip-audit cannot report severity information in any reliable or standardized form.
+
+Because severity is absent from pip-audit's output, our SARIF converter applies a consistent default severity for all findings:
+
+SARIF Field	Value	Rationale
+"level"	"warning"	GitHub interprets this as Medium severity, the most neutral and appropriate default.
+"security-severity"	"5.0"	This numeric value falls within GitHub’s “Medium” severity range (4.0–6.9).
+
+This approach ensures:
+
+SARIF remains valid and compatible with GitHub Code Scanning
+
+All findings display correctly in the Security tab
+
+We accurately reflect the limitations of pip-audit instead of inferring severity that does not exist
+
+If pip-audit adds severity or CVSS fields in a future release, this action can be updated to map those values dynamically.
