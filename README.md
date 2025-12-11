@@ -9,6 +9,19 @@ This action is part of a course project for an Intermediate Software Testing cla
 
 ---
 
+## Repository Structure
+
+pip-audit-sarif-action/
+├── action.yml # GitHub Action definition (inputs, outputs, steps)
+├── converter.py # Converts pip-audit JSON → SARIF 2.1.0
+├── uv.lock # Python dependencies (empty placeholder as required)
+├── README.md # Documentation
+├── LICENSE # MIT License
+└── examples/
+├── sample-input.json # Example pip-audit output
+└── sample-output.sarif # Example SARIF produced by this action
+---
+
 ## What This Action Does
 
 - Runs a Python script (`converter.py`) that:
